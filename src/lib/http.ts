@@ -37,17 +37,20 @@ export function clearAccessToken() {
 }
 
 async function refreshToken(): Promise<string> {
-  // Basic refresh stub: hit /auth/profile to validate, or use real refresh endpoint when available.
-  // If backend exposes /auth/refresh, replace this with that call.
-  const existing = getAccessToken();
-  if (!existing) throw new Error("No token to refresh");
-  // No real refresh endpoint provided in docs. Simulate success passthrough.
-  return existing;
+  // Switch to backend refresh endpoint: POST /auth/refresh -> { token }
+  try {
+    const res = await axios.post(`${API_BASE_URL}/auth/refresh`, {}, { timeout: 10000, withCredentials: false });
+    const token = (res.data as { token?: string })?.token;
+    if (!token) throw new Error("Refresh endpoint did not return token");
+    return token;
+  } catch (e) {
+    throw new Error("Unable to refresh token");
+  }
 }
 
 function createClient(): AxiosInstance {
   const client = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: API_BASE_URL, // confirmed baseURL=https://test-fe.mysellerpintar.com/api
     timeout: 15000,
   });
 
@@ -72,23 +75,25 @@ function createClient(): AxiosInstance {
   client.interceptors.response.use(
     (res: any) => res,
     async (error: AxiosError) => {
-      const original = error.config as AxiosRequestConfig & { _retry?: boolean };
+      const original = error.config as AxiosRequestConfig & { _retry?: boolean; _retries?: number };
       const status = error.response?.status;
 
       // Simple exponential backoff for 5xx up to 2 retries
       const shouldRetry5xx = status && status >= 500 && status < 600;
       if (shouldRetry5xx) {
-        const retries = (original as any)._retries ?? 0;
+        const retries = original._retries ?? 0;
         if (retries < 2) {
-          (original as any)._retries = retries + 1;
+          original._retries = retries + 1;
           const delay = Math.pow(2, retries) * 300;
           await new Promise((r) => setTimeout(r, delay));
           return client(original);
         }
       }
 
-      // 401 handling with queued refresh
-      if (status === 401 && !original._retry && original.url !== "/auth/login") {
+      // 401 handling with queued refresh (exclude login and refresh endpoints to avoid loops)
+      const url = original.url || "";
+      const isAuthRoute = url.startsWith("/auth/login") || url.startsWith("/auth/refresh");
+      if (status === 401 && !original._retry && !isAuthRoute) {
         original._retry = true;
         if (isRefreshing) {
           const newToken = await addToQueue();

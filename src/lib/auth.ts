@@ -33,8 +33,9 @@ export function saveToken(token: string) {
 export function clearToken() {
   deleteCookie(TOKEN_COOKIE);
 }
-
+ 
 export function roleRedirectPath(role?: Role): string {
-  if (role === "Admin") return "/dashboard";
+  // Redirect Admins to /admin (we do not use /dashboard)
+  if (role === "Admin") return "/admin";
   return "/articles";
 }

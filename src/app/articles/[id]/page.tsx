@@ -40,6 +40,7 @@ function RelatedList({ items, currentId }: { items: Article[]; currentId: string
     <ul className="space-y-2">
       {items
         .filter((a) => a.id !== currentId)
+        .slice(0, 3)
         .map((a) => (
           <li key={a.id}>
             <Link className="text-blue-600 hover:underline" href={`/articles/${a.id}`}>
@@ -103,19 +104,21 @@ export default function ArticleDetailPage() {
             const filtered = fallbackData.articles.filter(
               (a) => a.categoryId === categoryId && a.id !== id
             );
+            // keep only up to 3
+            const data = filtered.slice(0, 3);
             return {
-              data: filtered.slice(0, limit),
+              data,
               page: 1,
-              limit,
-              total: filtered.length,
-              totalData: filtered.length,
+              limit: data.length,
+              total: data.length,
+              totalData: data.length,
               currentPage: 1,
-              totalPages: Math.max(1, Math.ceil(filtered.length / limit)),
+              totalPages: 1,
             };
           }
         );
         if (!mounted) return;
-        setRelated(relatedRes.data ?? []);
+        setRelated((relatedRes.data ?? []).slice(0, 3));
       } catch (e) {
         if (!mounted) return;
         setErr("Failed to load article");
@@ -137,13 +140,13 @@ export default function ArticleDetailPage() {
       <Breadcrumbs article={article} />
 
       {loading ? (
-        <div className="space-y-3">
+        <div className="space-y-3" role="status" aria-live="polite" aria-busy="true">
           <div className="h-8 w-2/3 bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
           <div className="h-4 w-1/3 bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
           <div className="h-28 w-full bg-gray-200 dark:bg-gray-800 animate-pulse rounded" />
         </div>
       ) : err ? (
-        <div className="text-sm text-red-600">{err}</div>
+        <div className="text-sm text-red-600" role="alert">{err}</div>
       ) : !article ? (
         <div className="text-sm text-gray-600">Article not found.</div>
       ) : (
@@ -154,12 +157,17 @@ export default function ArticleDetailPage() {
               {article.category?.name ?? "Uncategorized"}
             </div>
             <div className="prose max-w-none">
-              <p className="whitespace-pre-wrap">{article.content}</p>
+              {/* Render HTML returned by API; ensure server provides sanitized/trusted HTML */}
+              <div
+                dangerouslySetInnerHTML={{ __html: article?.content ?? "" }}
+                aria-label="Article content"
+              />
             </div>
             <div className="pt-4">
               <Link
                 href={nextBack || "/articles"}
-                className="inline-block rounded border px-3 py-2 hover:bg-gray-50"
+                className="inline-block rounded border px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-label="Back to Articles"
               >
                 Back to Articles
               </Link>

@@ -18,6 +18,9 @@ function useDebounce<T>(value: T, delay = 400) {
 
 import Link from "next/link";
 
+// Local module-level cache for categories, used for reliable name rendering in ArticleCard
+const categoriesCache: Map<string, Category> = new Map();
+
 function ArticleCard({ article }: { article: Article }) {
   return (
     <Link
@@ -26,11 +29,18 @@ function ArticleCard({ article }: { article: Article }) {
     >
       <h3 className="text-lg font-semibold">{article.title}</h3>
       <p className="text-sm text-gray-500 mt-1">
-        {article.category?.name ?? "Uncategorized"}
+        {(article.category?.name ??
+          (() => {
+            // Fallback to category by id if relationship not populated
+            const cat = categoriesCache.get(article.categoryId);
+            return cat?.name ?? "Uncategorized";
+          })())}
       </p>
-      <p className="text-sm text-gray-700 line-clamp-3 mt-2">
-        {article.content}
-      </p>
+      <div
+        className="text-sm text-gray-700 line-clamp-3 mt-2 prose prose-sm max-w-none"
+        dangerouslySetInnerHTML={{ __html: article?.content ?? "" }}
+        aria-label="Article preview"
+      />
     </Link>
   );
 }
@@ -54,6 +64,7 @@ export default function ArticlesPage() {
   const debouncedSearch = useDebounce(search, 400);
   const debouncedCategory = useDebounce(category, 400);
 
+
   // Load categories from API first; fallback to local if unavailable
   useEffect(() => {
     let mounted = true;
@@ -68,6 +79,9 @@ export default function ArticlesPage() {
       );
       if (!mounted) return;
       setCategories(cats);
+      // populate cache for safe fallback by id
+      categoriesCache.clear();
+      for (const c of cats) categoriesCache.set(c.id, c);
     }
     loadCategories();
     return () => {
@@ -118,7 +132,16 @@ export default function ArticlesPage() {
           }
         );
         if (!mounted) return;
-        setArticles(server.data);
+
+        // Ensure category fallback on API failure or missing category join
+        const withSafeCategory = server.data.map((a) => ({
+          ...a,
+          category: a.category ?? categories.find((c) => c.id === a.categoryId) ?? { id: "", name: "Uncategorized", userId: "", createdAt: "", updatedAt: "" },
+        }));
+
+        // Enforce strict limit items per page on UI regardless of API inconsistencies
+        const sliced = withSafeCategory.slice(0, limit);
+        setArticles(sliced);
 
         // Normalize pagination fields from API: prefer totalPages/currentPage when available
         const apiTotalPages =
@@ -126,8 +149,8 @@ export default function ArticlesPage() {
           (server.total && server.limit
             ? Math.max(1, Math.ceil(server.total / server.limit))
             : undefined);
-        const apiCurrentPage = server.currentPage ?? server.page;
-        const apiTotalData = server.totalData ?? server.total;
+        const apiCurrentPage = server.currentPage ?? server.page ?? page;
+        const apiTotalData = server.totalData ?? server.total ?? undefined;
 
         setTotalPages(apiTotalPages);
         setCurrentPage(apiCurrentPage);
