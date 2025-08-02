@@ -79,7 +79,7 @@ export default function AdminUsersByPostsPage() {
       </div>
 
       <div className="border rounded-md overflow-x-auto" aria-busy={loading}>
-        <table className="w-full text-sm table min-w-[420px]">
+        <table className="w-full text-sm table min-w-[520px]">
           <thead>
             <tr>
               <th className="text-left p-2">Username</th>

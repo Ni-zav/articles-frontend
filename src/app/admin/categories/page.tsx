@@ -115,8 +115,8 @@ export default function AdminCategoriesListPage() {
           <TextSkeleton lines={1} />
         </div>
       ) : (
-        <div className="overflow-auto rounded border">
-          <table className="min-w-full text-sm table">
+        <div className="overflow-x-auto rounded border">
+          <table className="w-full text-sm table min-w-[600px]">
             <thead className="">
               <tr>
                 <th className="text-left px-3 py-2">Name</th>

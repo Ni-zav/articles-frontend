@@ -95,7 +95,7 @@ export default function AdminArticlesListPage() {
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Articles</h1>
         <Link
-          href="/articles/create"
+          href="/admin/articles/create"
           className="button button-primary text-sm"
         >
           + Create
@@ -130,7 +130,7 @@ export default function AdminArticlesListPage() {
       </div>
 
       <div className="border rounded-md overflow-x-auto" aria-busy={!!deletingId}>
-        <table className="w-full text-sm table">
+        <table className="w-full text-sm table min-w-[640px]">
           <thead>
             <tr>
               <th className="text-left p-2">Title</th>
