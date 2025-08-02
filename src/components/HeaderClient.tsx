@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { getToken, clearToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";

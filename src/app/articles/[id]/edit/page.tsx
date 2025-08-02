@@ -67,7 +67,8 @@ export default function ArticleEditPage() {
   }, [id, show]);
 
   // Image upload disabled for non-admin editor
-  async function handleUploadDisabled(_file: File): Promise<string | undefined> {
+  // Parameter intentionally unused
+  async function handleUploadDisabled(): Promise<string | undefined> {
     show("Image upload is available for admins only", { type: "warning" });
     return undefined;
   }
@@ -91,7 +92,7 @@ export default function ArticleEditPage() {
       const next = fromMine ? "/articles?mine=1" : `/articles/${id}`;
       router.replace(next);
       return;
-    } catch (err: unknown) {
+    } catch {
       show("Failed to save article", { type: "error" });
     } finally {
       setSubmitting(false);
