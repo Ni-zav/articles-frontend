@@ -209,11 +209,11 @@ Schemas (abridged)
 ## Local Development
 
 Install dependencies
-- yarn install
+- bun install
 - or npm/pnpm/bun as you prefer (project includes a yarn packageManager field)
 
 Run dev server
-- yarn dev
+- bun dev
 - open http://localhost:3000
 
 Environment
@@ -221,11 +221,7 @@ Environment
   - NEXT_PUBLIC_API_BASE_URL=http://localhost:4000/api
 
 Build and start
-- yarn build
-- yarn start
-
-Lint
-- yarn lint
+- bun run build
 
 ## Production and Deployment
 
@@ -263,7 +259,7 @@ Lint
 - Configure API URL
   - export NEXT_PUBLIC_API_BASE_URL=https://your-api.example.com
 - Start
-  - yarn dev
+  - bun dev
 - Auth
   - Register at /register
   - Login at /login
@@ -273,7 +269,3 @@ Lint
   - Manage mine: /articles?mine=1
 - Admin
   - After login as Admin: top-right Profile → Admin
-
-## License
-
-MIT (or your preferred license)
