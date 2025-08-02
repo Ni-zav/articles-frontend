@@ -34,7 +34,7 @@ export default function AdminArticleEditError({
             reset();
             router.refresh();
           }}
-          className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
           aria-label="Retry loading editor"
         >
           Retry

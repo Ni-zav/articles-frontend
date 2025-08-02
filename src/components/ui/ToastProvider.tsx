@@ -56,10 +56,10 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
           <div
             key={t.id}
             role="status"
-            className={`w-full max-w-md rounded-md border px-4 py-3 shadow bg-white ${
-              t.type === "success" ? "border-green-300" :
-              t.type === "error" ? "border-red-300" :
-              t.type === "warning" ? "border-yellow-300" : "border-gray-200"
+            className={`w-full max-w-md rounded-md border px-4 py-3 shadow ui-card ${
+              t.type === "success" ? "border-green-500/40" :
+              t.type === "error" ? "border-red-500/40" :
+              t.type === "warning" ? "border-yellow-500/40" : "border-[var(--border)]"
             }`}
           >
             <div className="flex items-start gap-3">
@@ -71,12 +71,12 @@ export default function ToastProvider({ children }: { children: React.ReactNode 
                   t.type === "warning" ? "bg-yellow-500" : "bg-gray-400"
                 }`}
               />
-              <p className="text-sm text-gray-900">{t.message}</p>
+              <p className="text-sm">{t.message}</p>
               <button
                 type="button"
                 aria-label="Close"
                 onClick={() => remove(t.id)}
-                className="ml-auto text-gray-500 hover:text-gray-700 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 rounded"
+                className="ml-auto muted hover:text-[var(--fg)] focus:outline-2 focus:outline-offset-2 focus:outline-[var(--primary)] rounded button-ghost"
               >
                 ×
               </button>

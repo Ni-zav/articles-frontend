@@ -88,7 +88,7 @@ export default function AdminCategoriesListPage() {
         <h1 id="categories-title" className="text-xl font-semibold">Categories</h1>
         <Link
           href="/admin/categories/new"
-          className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="button button-primary text-sm"
         >
           New Category
         </Link>
@@ -101,7 +101,7 @@ export default function AdminCategoriesListPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search categories…"
-          className="w-full max-w-xs border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="input text-sm max-w-xs"
           aria-label="Search categories"
         />
       </div>
@@ -116,8 +116,8 @@ export default function AdminCategoriesListPage() {
         </div>
       ) : (
         <div className="overflow-auto rounded border">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50 text-gray-700">
+          <table className="min-w-full text-sm table">
+            <thead className="">
               <tr>
                 <th className="text-left px-3 py-2">Name</th>
                 <th className="text-left px-3 py-2">Created</th>
@@ -138,7 +138,7 @@ export default function AdminCategoriesListPage() {
                       <div className="inline-flex items-center gap-2">
                         <Link
                           href={`/admin/categories/${c.id}`}
-                          className="px-2 py-1 rounded border text-gray-700 hover:bg-gray-50 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+                          className="button button-outline text-sm px-2 py-1"
                           aria-label={`Edit ${c.name}`}
                         >
                           Edit
@@ -146,7 +146,7 @@ export default function AdminCategoriesListPage() {
                         <button
                           type="button"
                           onClick={() => onDelete(c.id)}
-                          className="px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+                          className="button text-sm px-2 py-1 border border-red-500/50 text-red-400 hover:bg-[color-mix(in_oklab,var(--danger)_8%,var(--bg))]"
                           aria-label={`Delete ${c.name}`}
                         >
                           Delete

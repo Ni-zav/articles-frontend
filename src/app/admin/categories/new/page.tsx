@@ -45,7 +45,7 @@ export default function AdminCategoryCreatePage() {
             onBlur={() => setTouched(true)}
             aria-invalid={!!nameError}
             aria-describedby={nameError ? "name-error" : undefined}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
             placeholder="e.g. Technology"
             required
           />
@@ -58,14 +58,14 @@ export default function AdminCategoryCreatePage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50"
+            className="px-3 py-2 rounded-md bg-orange-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600 disabled:opacity-50"
           >
             {submitting ? "Saving..." : "Create"}
           </button>
           <button
             type="button"
             onClick={() => router.push("/admin/categories")}
-            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
           >
             Cancel
           </button>

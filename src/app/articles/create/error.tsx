@@ -23,7 +23,7 @@ export default function CreateArticleError({ error, reset }: { error: Error & { 
         <button
           type="button"
           onClick={() => { reset(); router.refresh(); }}
-          className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="px-3 py-2 rounded-md bg-orange-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
           aria-label="Retry loading create article page"
         >
           Retry
@@ -31,7 +31,7 @@ export default function CreateArticleError({ error, reset }: { error: Error & { 
         <button
           type="button"
           onClick={() => router.push("/articles")}
-          className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
           aria-label="Back to articles"
         >
           Back to Articles

@@ -24,17 +24,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh bg-[var(--bg)] text-[var(--fg)]`}>
         <ToastProvider>
-          <header className="border-b">
-            <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
-              <a href="/" className="font-semibold">Home</a>
-              <a href="/articles" className="text-sm text-gray-600 hover:text-gray-900">Articles</a>
+          <header className="app-header">
+            <div className="container py-3 flex items-center gap-4">
+              <a href="/" className="text-base font-semibold hover:opacity-90">Article Platform</a>
+              <a href="/articles" className="text-sm muted hover:text-foreground">Articles</a>
               {/* Client header handles auth-aware controls and role-based nav */}
               <HeaderClientWrapper />
             </div>
           </header>
-          <main>{children}</main>
+          <main className="container py-6">
+            <div className="ui-card p-4">
+              {children}
+            </div>
+          </main>
         </ToastProvider>
       </body>
     </html>

@@ -129,8 +129,10 @@ export default function TipTapEditor({
           disabled={disabled}
           aria-label={ariaLabel}
           aria-pressed={pressed}
-          className={`px-2 py-1 rounded border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50 ${
-            pressed ? "bg-blue-50 border-blue-300 text-blue-700" : "hover:bg-gray-50"
+          className={`px-2 py-1 rounded border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-[var(--primary)] disabled:opacity-50 ${
+            pressed
+              ? "bg-[color-mix(in_oklab,var(--primary)_14%,var(--bg))] border-[color-mix(in_oklab,var(--primary)_40%,var(--border))] text-[var(--fg)]"
+              : "hover:bg-[color-mix(in_oklab,var(--primary)_6%,var(--bg))]"
           }`}
         >
           {children}
@@ -142,7 +144,7 @@ export default function TipTapEditor({
   return (
     <div className="space-y-2">
       {/* Toolbar */}
-      <div role="toolbar" aria-label="Editor toolbar" className="flex flex-wrap items-center gap-2 border rounded p-2 bg-white">
+      <div role="toolbar" aria-label="Editor toolbar" className="flex flex-wrap items-center gap-2 border rounded p-2 surface">
         <ToolbarButton
           onClick={() => editor?.chain().focus().toggleBold().run()}
           pressed={!!editor?.isActive("bold")}
@@ -244,7 +246,7 @@ export default function TipTapEditor({
       </div>
 
       {/* Editor / Preview */}
-      <div className="border rounded p-3 bg-white">
+      <div className="border rounded p-3 surface">
         {preview ? (
           <div
             aria-label="Preview content"

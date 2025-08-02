@@ -119,7 +119,7 @@ export default function CreateArticlePage() {
             onBlur={() => setTouched((t) => ({ ...t, title: true }))}
             aria-invalid={!!(touched.title && titleError)}
             aria-describedby={touched.title && titleError ? "title-error" : undefined}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
             placeholder="Enter article title"
             required
           />
@@ -135,7 +135,7 @@ export default function CreateArticlePage() {
             onBlur={() => setTouched((t) => ({ ...t, category: true }))}
             aria-invalid={!!(touched.category && categoryError)}
             aria-describedby={touched.category && categoryError ? "category-error" : undefined}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="select text-sm"
             required
             disabled={catsLoading || !!catsError}
           >
@@ -169,14 +169,14 @@ export default function CreateArticlePage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50"
+            className="button button-primary text-sm disabled:opacity-50"
             aria-label="Create article"
           >
             {submitting ? "Creating…" : "Create"}
           </button>
           <Link
             href="/articles"
-            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="button button-outline text-sm"
           >
             Cancel
           </Link>

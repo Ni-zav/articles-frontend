@@ -12,10 +12,18 @@ function NavItem({ href, label, icon }: { href: string; label: string; icon?: Re
       <Link
         href={href}
         aria-current={active ? "page" : undefined}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 ${
-          active ? "bg-blue-50 text-blue-700" : "hover:bg-gray-100"
+        className={`relative group flex items-center gap-2 px-3 py-2 rounded-md transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${
+          active
+            ? "bg-[color-mix(in_oklab,var(--primary)_12%,var(--bg))] text-[var(--fg)] border border-[var(--border)]"
+            : "hover:bg-[color-mix(in_oklab,var(--primary)_6%,var(--bg))] text-[var(--fg-muted)] hover:text-[var(--fg)]"
         }`}
       >
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-0 top-0 h-full w-0.5 rounded-sm ${
+            active ? "bg-[var(--primary)]" : "bg-transparent group-hover:bg-[color-mix(in_oklab,var(--primary)_50%,transparent)]"
+          }`}
+        />
         {icon}
         <span className="text-sm font-medium">{label}</span>
       </Link>
@@ -26,7 +34,7 @@ function NavItem({ href, label, icon }: { href: string; label: string; icon?: Re
 export default function AdminSidebar() {
   return (
     <aside
-      className="w-64 border-r bg-white"
+      className="w-64 border-r surface"
       aria-label="Admin navigation"
       role="navigation"
     >

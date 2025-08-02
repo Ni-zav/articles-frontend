@@ -1,26 +1,278 @@
 @import "tailwindcss";
 
+/* Accessible Design Tokens - Monochrome with Orange Accent */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base surfaces (more black-forward) */
+  --bg: #000000;
+  --bg-elev: #0b0b0c;
+  --bg-muted: #111214;
+
+  /* Content */
+  --fg: #f2f4f8;      /* high-contrast on black */
+  --fg-muted: #c0c6cf;/* secondary */
+  --fg-subtle: #8d94a0;
+
+  /* Accent: Orange */
+  --primary: #ff7a1a;          /* orange accent */
+  --primary-contrast: #0a0a0a; /* readable on orange */
+
+  /* States (kept subtle to maintain monochrome feel) */
+  --success: #2fbf71;
+  --warning: #f0b429;
+  --danger: #ef4444;
+
+  /* Borders / outlines */
+  --border: #1f242b;
+
+  /* Component tokens */
+  --radius: 10px;
+  --radius-sm: 8px;
+  --radius-lg: 14px;
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.5), 0 1px 1px rgba(0,0,0,0.35);
+  --shadow-2: 0 8px 22px rgba(0,0,0,0.6), 0 3px 8px rgba(0,0,0,0.5);
+
+  /* Layout */
+  --container: 1100px;
+
+  --background: var(--bg);
+  --foreground: var(--fg);
 }
 
+/* Tailwind theme bridge */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-muted: var(--fg-muted);
+  --color-subtle: var(--fg-subtle);
+
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --color-border: var(--border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Light theme (optional): keep monochrome with orange accent */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f9fafb;
+    --bg-elev: #ffffff;
+    --bg-muted: #f3f4f6;
+
+    --fg: #0b0b0c;
+    --fg-muted: #404753;
+    --fg-subtle: #5b6472;
+
+    --primary: #e06210;
+    --primary-contrast: #ffffff;
+
+    --border: #e5e7eb;
+
+    --background: var(--bg);
+    --foreground: var(--fg);
+  }
+}
+
+/* Dark theme default: black with orange accent */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #000000;
+    --bg-elev: #0b0b0c;
+    --bg-muted: #111214;
+
+    --fg: #f2f4f8;
+    --fg-muted: #c0c6cf;
+    --fg-subtle: #8d94a0;
+
+    --primary: #ff7a1a;
+    --primary-contrast: #0a0a0a;
+
+    --border: #1f242b;
+
+    --background: var(--bg);
+    --foreground: var(--fg);
   }
+}
+
+/* Base reset + typography */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Containers */
+.container {
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+/* Links */
+a {
+  color: var(--fg); /* default monochrome */
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--primary); /* hint of orange on hover */
+  text-decoration: underline;
+}
+
+/* Cards */
+.ui-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+/* Buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  padding: .5rem .9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.button:hover { box-shadow: var(--shadow-1); }
+
+.button-primary {
+  background: var(--primary);
+  color: var(--primary-contrast); /* text is white/contrast on orange */
+  border-color: transparent;
+}
+.button-primary:hover {
+  /* keep orange background and ensure text switches to white for readability */
+  background: color-mix(in oklab, var(--primary) 96%, black);
+  color: var(--primary-contrast);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+  filter: brightness(0.98);
+}
+.button-primary:active {
+  background: color-mix(in oklab, var(--primary) 90%, black);
+  color: var(--primary-contrast);
+}
+.button-ghost {
+  background: transparent;
+  color: var(--foreground);
+}
+.button-ghost:hover {
+  /* Previously some buttons hovered to white; change to orange accent with white text */
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: var(--primary-contrast);
+  border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+}
+.button-ghost:active {
+  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  color: var(--primary-contrast);
+  border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+}
+.button-outline {
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--border);
+}
+.button-outline:hover {
+  /* Hover to orange background with white text for clarity */
+  background: var(--primary);
+  color: var(--primary-contrast);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 20%, transparent);
+}
+.button-outline:active {
+  background: color-mix(in oklab, var(--primary) 92%, black);
+  color: var(--primary-contrast);
+  border-color: var(--primary);
+}
+
+/* Inputs */
+.input, .select, .textarea {
+  width: 100%;
+  background: var(--bg-elev);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .55rem .7rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 22%, transparent);
+}
+.label {
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.table th, .table td {
+  padding: .65rem .75rem;
+  border-bottom: 1px solid var(--border);
+}
+.table thead th {
+  text-align: left;
+  color: var(--fg-muted);
+  font-weight: 600;
+  background: var(--bg-muted);
+}
+
+/* Alerts */
+.alert {
+  border-radius: var(--radius);
+  padding: .75rem .9rem;
+  border: 1px solid var(--border);
+}
+.alert-info { background: color-mix(in oklab, var(--primary) 12%, var(--bg)); color: var(--foreground); }
+.alert-success { background: color-mix(in oklab, var(--success) 16%, var(--bg)); }
+.alert-warning { background: color-mix(in oklab, var(--warning) 18%, var(--bg)); }
+.alert-danger { background: color-mix(in oklab, var(--danger) 14%, var(--bg)); }
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: color-mix(in oklab, var(--bg), transparent 0%);
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Utility */
+.muted { color: var(--fg-muted); }
+.subtle { color: var(--fg-subtle); }
+.surface { background: var(--bg-elev); }
+.rounded { border-radius: var(--radius); }
+.shadow-1 { box-shadow: var(--shadow-1); }
+.shadow-2 { box-shadow: var(--shadow-2); }
+.border { border: 1px solid var(--border); }

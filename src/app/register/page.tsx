@@ -67,11 +67,11 @@ export default function RegisterPage() {
   return (
     <div className="max-w-md mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-6">Register</h1>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-4 ui-card">
         <div className="space-y-1">
-          <label className="text-sm">Username</label>
+          <label className="label text-sm">Username</label>
           <input
-            className="w-full rounded border px-3 py-2"
+            className="input text-sm"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoComplete="username"
@@ -80,10 +80,10 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm">Password</label>
+          <label className="label text-sm">Password</label>
           <div className="flex gap-2">
             <input
-              className="w-full rounded border px-3 py-2"
+              className="input text-sm"
               type={showPass ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -93,7 +93,7 @@ export default function RegisterPage() {
             />
             <button
               type="button"
-              className="rounded border px-3"
+              className="button button-outline text-sm"
               onClick={() => setShowPass((s) => !s)}
             >
               {showPass ? "Hide" : "Show"}
@@ -102,9 +102,9 @@ export default function RegisterPage() {
         </div>
 
         <div className="space-y-1">
-          <label className="text-sm">Role</label>
+          <label className="label text-sm">Role</label>
           <select
-            className="w-full rounded border px-3 py-2"
+            className="select text-sm"
             value={role}
             onChange={(e) => setRole(e.target.value as Role)}
           >
@@ -113,19 +113,26 @@ export default function RegisterPage() {
           </select>
         </div>
 
-        {err && <div className="text-sm text-red-600">{err}</div>}
+        {err && (
+          <div role="alert" className="alert-danger text-sm">
+            {err}
+          </div>
+        )}
 
         <button
-          className="rounded bg-black text-white px-4 py-2 disabled:opacity-50"
+          className="button button-primary text-sm disabled:opacity-50"
           disabled={loading}
         >
           {loading ? "Creating account..." : "Register"}
         </button>
       </form>
 
-      <p className="text-sm text-gray-600 mt-4">
+      <p className="text-sm text-[var(--fg-muted)] mt-4">
         Already have an account?{" "}
-        <a className="underline" href="/login">
+        <a
+          className="underline hover:text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-sm"
+          href="/login"
+        >
           Login
         </a>
       </p>

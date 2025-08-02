@@ -22,7 +22,7 @@ export default function AdminRootError({
   return (
     <section className="p-4 space-y-4" role="alert" aria-live="assertive">
       <h1 className="text-xl font-semibold">Something went wrong</h1>
-      <p className="text-sm text-gray-700">
+      <p className="text-sm muted">
         The admin area encountered an error. You can try again or return to the dashboard.
       </p>
       <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ export default function AdminRootError({
             reset();
             router.refresh();
           }}
-          className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="button button-primary button-sm"
           aria-label="Retry loading admin area"
         >
           Retry
@@ -40,7 +40,7 @@ export default function AdminRootError({
         <button
           type="button"
           onClick={() => router.push("/admin")}
-          className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="button button-outline button-sm"
           aria-label="Back to admin dashboard"
         >
           Back to Admin

@@ -77,31 +77,28 @@ export default function HeaderClientWrapper() {
   }, [router]);
 
   return (
-    <div className="ml-auto flex items-center gap-3">
-      {/* Left side in layout already has: Home, Articles */}
+    <div className="ml-auto flex items-center gap-2">
       {hasToken ? (
         <>
-          {/* Authenticated user links */}
           <Link
             href="/articles?mine=1"
-            className="text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-2 py-1"
+            className="button button-ghost text-sm"
             aria-label="My Articles"
           >
             My Articles
           </Link>
           <Link
             href="/articles/create"
-            className="text-sm text-white bg-blue-600 hover:bg-blue-700 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="button button-primary text-sm"
             aria-label="Create Article"
           >
             Create Article
           </Link>
 
-          {/* Admin-only link to Admin dashboard (no nested menu) */}
           {role === "Admin" ? (
             <Link
               href="/admin"
-              className="text-sm rounded border px-3 py-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="button button-outline text-sm"
               aria-label="Admin dashboard"
             >
               Admin
@@ -110,7 +107,7 @@ export default function HeaderClientWrapper() {
 
           <button
             onClick={handleLogout}
-            className="rounded border px-3 py-1 text-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="button button-outline text-sm"
             aria-label="Logout"
           >
             Logout
@@ -120,15 +117,15 @@ export default function HeaderClientWrapper() {
         <>
           <Link
             href="/login"
-            className="text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-1"
+            className="button button-outline text-sm"
             aria-label="Login"
           >
             Login
           </Link>
-          <span className="text-gray-300">/</span>
+          <span className="muted px-1">/</span>
           <Link
             href="/register"
-            className="text-sm text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded px-1"
+            className="button button-primary text-sm"
             aria-label="Register"
           >
             Register

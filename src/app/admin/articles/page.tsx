@@ -92,7 +92,7 @@ export default function AdminArticlesListPage() {
         <h1 className="text-xl font-semibold">Articles</h1>
         <Link
           href="/articles/create"
-          className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          className="button button-primary text-sm"
         >
           + Create
         </Link>
@@ -106,7 +106,7 @@ export default function AdminArticlesListPage() {
             value={title}
             onChange={(e) => { setTitle(e.target.value); setPage(1); }}
             placeholder="Search by title"
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="input text-sm"
           />
         </div>
         <div>
@@ -115,7 +115,7 @@ export default function AdminArticlesListPage() {
             id="f-category"
             value={categoryId}
             onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="select text-sm"
           >
             <option value="">All</option>
             {categories.map((c) => (
@@ -126,8 +126,8 @@ export default function AdminArticlesListPage() {
       </div>
 
       <div className="border rounded-md overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+        <table className="w-full text-sm table">
+          <thead>
             <tr>
               <th className="text-left p-2">Title</th>
               <th className="text-left p-2 w-48">Category</th>
@@ -151,14 +151,14 @@ export default function AdminArticlesListPage() {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/admin/articles/${a.id}/edit`}
-                        className="inline-block px-2 py-1 rounded border hover:bg-gray-50"
+                        className="button button-outline text-sm px-2 py-1"
                         aria-label={`Edit ${a.title}`}
                       >
                         Edit
                       </Link>
                       <Link
                         href={`/articles/${a.id}`}
-                        className="inline-block px-2 py-1 rounded border hover:bg-gray-50"
+                        className="button button-outline text-sm px-2 py-1"
                         aria-label={`View ${a.title}`}
                       >
                         View

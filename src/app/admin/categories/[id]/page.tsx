@@ -67,7 +67,7 @@ export default function AdminCategoryEditPage() {
       <h1 id="edit-category-title" className="text-xl font-semibold mb-4">Edit Category</h1>
 
       {loading ? (
-        <p className="text-sm text-gray-600">Loading…</p>
+        <p className="text-sm muted">Loading…</p>
       ) : (
         <form onSubmit={onSubmit} noValidate className="space-y-4" aria-describedby={nameError ? "name-error" : undefined}>
           <div>
@@ -80,7 +80,7 @@ export default function AdminCategoryEditPage() {
               onBlur={() => setTouched(true)}
               aria-invalid={!!nameError}
               aria-describedby={nameError ? "name-error" : undefined}
-              className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+              className="input text-sm"
               placeholder="e.g. Technology"
               minLength={2}
               required
@@ -94,10 +94,10 @@ export default function AdminCategoryEditPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50"
+              className="button button-primary text-sm disabled:opacity-50"
               aria-label="Save category"
             >
-              {submitting ? "Saving..." : "Save"}
+              {submitting ? "Saving…" : "Save"}
             </button>
             <button
               type="button"
@@ -106,7 +106,7 @@ export default function AdminCategoryEditPage() {
                 console.log("[Category Edit] Cancel pressed");
                 router.push("/admin/categories");
               }}
-              className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+              className="button button-outline text-sm"
               aria-label="Cancel and go back"
             >
               Cancel

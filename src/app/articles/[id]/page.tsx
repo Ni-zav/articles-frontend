@@ -35,7 +35,7 @@ function Breadcrumbs({ article }: { article?: Article }) {
           </Link>
         </li>
         <li>/</li>
-        <li className="text-gray-900 font-medium truncate max-w-[50ch]">
+        <li className="text-gray-500 font-medium truncate max-w-[50ch]">
           {article?.title ?? "Detail"}
         </li>
       </ol>
@@ -54,7 +54,7 @@ function RelatedList({ items, currentId }: { items: Article[]; currentId: string
         .slice(0, 3)
         .map((a) => (
           <li key={a.id}>
-            <Link className="text-blue-600 hover:underline" href={`/articles/${a.id}`}>
+            <Link className="text-orange-600 hover:underline" href={`/articles/${a.id}`}>
               {a.title}
             </Link>
             <div className="text-xs text-gray-500">
@@ -177,7 +177,7 @@ export default function ArticleDetailPage() {
             <div className="pt-4">
               <Link
                 href={nextBack || "/articles"}
-                className="inline-block rounded border px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="inline-block rounded border px-3 py-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 aria-label="Back to Articles"
               >
                 Back to Articles

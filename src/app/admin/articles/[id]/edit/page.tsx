@@ -101,8 +101,8 @@ export default function AdminArticleEditPage() {
 
   if (loading) {
     return (
-      <section className="p-4">
-        <p className="text-sm text-gray-600">Loading editor…</p>
+      <section className="p-4" role="status" aria-live="polite" aria-busy="true">
+        <p className="text-sm muted">Loading editor…</p>
       </section>
     );
   }
@@ -110,7 +110,7 @@ export default function AdminArticleEditPage() {
   if (!article) {
     return (
       <section className="p-4">
-        <p role="alert" className="text-sm text-red-600">Article not found</p>
+        <p role="alert" className="alert-error text-sm">Article not found</p>
       </section>
     );
   }
@@ -142,7 +142,7 @@ export default function AdminArticleEditPage() {
             onChange={(e) => setTitle(e.target.value)}
             aria-invalid={!!titleError}
             aria-describedby={titleError ? "title-error" : undefined}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="input text-sm"
             placeholder="Enter article title"
             required
           />
@@ -157,7 +157,7 @@ export default function AdminArticleEditPage() {
             onChange={(e) => setCategoryId(e.target.value)}
             aria-invalid={!!categoryError}
             aria-describedby={categoryError ? "category-error" : undefined}
-            className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="select text-sm"
             required
           >
             <option value="">Select category</option>
@@ -183,7 +183,7 @@ export default function AdminArticleEditPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50"
+            className="button button-primary text-sm disabled:opacity-50"
             aria-label="Save article"
           >
             {submitting ? "Saving…" : isDraft ? "Save Draft" : "Save"}
@@ -191,7 +191,7 @@ export default function AdminArticleEditPage() {
           <button
             type="button"
             onClick={() => router.push("/admin/articles")}
-            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+            className="button button-outline text-sm"
           >
             Cancel
           </button>
