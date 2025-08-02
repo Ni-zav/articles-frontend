@@ -134,8 +134,14 @@ a {
   text-underline-offset: 3px;
 }
 a:hover {
-  color: var(--primary); /* hint of orange on hover */
+  /* Keep orange hint for generic links */
+  color: var(--primary);
   text-decoration: underline;
+}
+
+/* Homepage CTA hover override: force black text when background turns orange */
+a.home-cta:hover {
+  color: #000 !important;
 }
 
 /* Cards */
@@ -257,6 +263,12 @@ a:hover {
 .alert-success { background: color-mix(in oklab, var(--success) 16%, var(--bg)); }
 .alert-warning { background: color-mix(in oklab, var(--warning) 18%, var(--bg)); }
 .alert-danger { background: color-mix(in oklab, var(--danger) 14%, var(--bg)); }
+
+/* Navbar dropdown items: force orange background + black text on hover */
+.nav-dd-item:hover {
+  background: var(--primary) !important;
+  color: #000 !important;
+}
 
 /* Header */
 .app-header {

@@ -221,7 +221,19 @@ export default function ArticlesClient() {
   }, [debouncedSearch, debouncedCategory, page, limit, mine, categories]);
 
   const categoryOptions = useMemo(() => {
-    return [{ id: "", name: "All" }, ...categories.map((c) => ({ id: c.id, name: c.name }))];
+    // Build options without any baked-in "All". We'll render the single "All" option separately.
+    const seen = new Set<string>();
+    const opts: { id: string; name: string }[] = [];
+    for (const c of categories) {
+      const cid = `${c?.id ?? ""}`.trim();
+      const cname = `${c?.name ?? ""}`.trim();
+      if (!cid) continue;
+      if (cname.toLowerCase() === "all") continue; // ignore categories literally named "All"
+      if (seen.has(cid)) continue;
+      seen.add(cid);
+      opts.push({ id: cid, name: cname || "Unnamed" });
+    }
+    return opts;
   }, [categories]);
 
   const isLastPage = totalPages ? page >= totalPages : false;
@@ -254,8 +266,12 @@ export default function ArticlesClient() {
           }}
           className="select"
         >
+          {/* Render exactly one "All" option first, then the rest */}
+          <option key="cat-all" value="">
+            All
+          </option>
           {categoryOptions.map((c) => (
-            <option key={c.id} value={c.id}>
+            <option key={`cat-${c.id}`} value={c.id}>
               {c.name}
             </option>
           ))}

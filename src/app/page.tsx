@@ -7,19 +7,19 @@ export default function Home() {
       </p>
       <div className="flex gap-3">
         <a
-          className="rounded border px-4 py-2 hover:bg-gray-50"
+          className="home-cta rounded border px-4 py-2 hover:bg-[var(--primary)] hover:!text-black transition-colors"
           href="/articles"
         >
           Browse Articles
         </a>
         <a
-          className="rounded border px-4 py-2 hover:bg-gray-50"
+          className="home-cta rounded border px-4 py-2 hover:bg-[var(--primary)] hover:!text-black transition-colors"
           href="/login"
         >
           Login
         </a>
         <a
-          className="rounded border px-4 py-2 hover:bg-gray-50"
+          className="home-cta rounded border px-4 py-2 hover:bg-[var(--primary)] hover:!text-black transition-colors"
           href="/register"
         >
           Register

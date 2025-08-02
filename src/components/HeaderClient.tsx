@@ -157,7 +157,7 @@ export default function HeaderClientWrapper() {
                 <li>
                   <Link
                     href="/articles?mine=1"
-                    className="block px-3 py-2 text-sm hover:bg-orange-50 hover:text-orange-700"
+                    className="nav-dd-item block px-3 py-2 text-sm"
                     aria-label="My Articles"
                   >
                     My Articles
@@ -166,7 +166,7 @@ export default function HeaderClientWrapper() {
                 <li>
                   <Link
                     href="/articles/create"
-                    className="block px-3 py-2 text-sm hover:bg-orange-50 hover:text-orange-700"
+                    className="nav-dd-item block px-3 py-2 text-sm"
                     aria-label="Create Article"
                   >
                     Create Article
@@ -203,7 +203,7 @@ export default function HeaderClientWrapper() {
                   <li>
                     <Link
                       href="/admin"
-                      className="block px-3 py-2 text-sm hover:bg-[color-mix(in_oklab,var(--primary)_6%,var(--bg))]"
+                      className="nav-dd-item block px-3 py-2 text-sm"
                       aria-label="Admin dashboard"
                     >
                       Admin
@@ -214,7 +214,7 @@ export default function HeaderClientWrapper() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full text-left block px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 focus-visible:ring-2 focus-visible:ring-red-500"
+                    className="nav-dd-item w-full text-left block px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-orange-500"
                     aria-label="Logout"
                   >
                     Logout
