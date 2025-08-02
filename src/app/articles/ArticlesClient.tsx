@@ -41,7 +41,7 @@ function ArticleCard({ article }: { article: Article }) {
         className="text-sm line-clamp-3 mt-2 prose prose-sm max-w-none text-[var(--fg-subtle)]"
         dangerouslySetInnerHTML={{ __html: article?.content ?? "" }}
         aria-label="Article preview"
-      />
+      ></div>
     </Link>
   );
 }
@@ -175,6 +175,7 @@ export default function ArticlesClient() {
         );
         if (!mounted) return;
 
+        // Keep full list; do not slice client-side so server pagination remains accurate
         const withSafeCategory = server.data.map((a) => ({
           ...a,
           category:
@@ -188,11 +189,7 @@ export default function ArticlesClient() {
             },
         }));
 
-        const sliced = withSafeCategory.slice(0, limit);
-        setArticles(sliced);
-
-        // Debug logs to verify filtering behavior (temporarily keep one; remove if noisy)
-        console.log("[Articles] mine?", mine, "meId:", meId, "returned:", (server?.data ?? []).length);
+        setArticles(withSafeCategory);
 
         const apiTotalPages =
           server.totalPages ??
@@ -231,12 +228,12 @@ export default function ArticlesClient() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-      <header className="space-y-2">
+      <div className="space-y-2">
         <h1 className="text-2xl font-bold">{mine ? "My Articles" : "Articles"}</h1>
         <p className="text-sm muted">
           {mine ? "These are your articles." : `Search, filter by category, and browse articles. Pagination is ${limit} items per page.`}
         </p>
-      </header>
+      </div>
 
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <input
@@ -280,11 +277,72 @@ export default function ArticlesClient() {
         <div className="text-sm muted">{mine ? "You have no articles yet." : "No articles found."}</div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {articles.map((a) => (
-              <ArticleCard key={a.id} article={a} />
-            ))}
-          </div>
+          {mine ? (
+            <div className="border rounded-md overflow-x-auto">
+              <table className="w-full text-sm table min-w-[640px]">
+                <thead>
+                  <tr>
+                    <th className="text-left p-2">Title</th>
+                    <th className="text-left p-2 w-48">Category</th>
+                    <th className="text-left p-2 w-32">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {articles.map((a) => (
+                    <tr key={a.id} className="border-t">
+                      <td className="p-2">
+                        <div className="font-medium">{a.title}</div>
+                        <div className="text-xs text-gray-500 truncate">{a.id}</div>
+                      </td>
+                      <td className="p-2">{a.category?.name ?? "Uncategorized"}</td>
+                      <td className="p-2">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/articles/${a.id}/edit`}
+                            className="button button-outline text-sm px-2 py-1"
+                            aria-label={`Edit ${a.title}`}
+                          >
+                            Edit
+                          </Link>
+                          <Link
+                            href={`/articles/${a.id}`}
+                            className="button button-outline text-sm px-2 py-1"
+                            aria-label={`View ${a.title}`}
+                          >
+                            View
+                          </Link>
+                          <button
+                            type="button"
+                            className="button button-danger text-sm px-2 py-1"
+                            aria-label={`Delete ${a.title}`}
+                            onClick={async () => {
+                              const confirmMsg = `Delete article "${a.title}"? This cannot be undone.`;
+                              if (!window.confirm(confirmMsg)) return;
+                              try {
+                                await articlesService.remove(a.id);
+                                // trigger refetch by reusing current state
+                                setPage((p) => p);
+                              } catch {
+                                // optionally surface toast elsewhere
+                              }
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {articles.map((a) => (
+                <ArticleCard key={a.id} article={a} />
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center justify-center gap-3 pt-4">
             <button
