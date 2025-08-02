@@ -28,7 +28,6 @@ function extractUniqueUsers(p: PaginatedResponse<Article> | null | undefined): D
 async function fetchUserPostCount(userId: string): Promise<number | undefined> {
   try {
     const res = await articlesService.list({ userId, page: 1, limit: 1 });
-    // Prefer totalData, then total, then compute fallback
     const total =
       typeof res.totalData === "number"
         ? res.totalData
@@ -53,7 +52,6 @@ export default function AdminUsersListPage() {
   const [data, setData] = useState<PaginatedResponse<Article> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Keep URL in sync
   useEffect(() => {
     const qs = new URLSearchParams();
     if (title) qs.set("title", title);
@@ -62,7 +60,6 @@ export default function AdminUsersListPage() {
     router.replace(`/admin/users${q ? `?${q}` : ""}`);
   }, [router, title, page]);
 
-  // Debounce title
   const [debouncedTitle, setDebouncedTitle] = useState(title);
   useEffect(() => {
     const t = setTimeout(() => setDebouncedTitle(title), 300);
@@ -75,7 +72,6 @@ export default function AdminUsersListPage() {
     setError(null);
     articlesService
       .list({
-        // Use article listing to derive users from embedded article.user
         title: debouncedTitle || undefined,
         page,
       })
@@ -108,7 +104,6 @@ export default function AdminUsersListPage() {
   const users = useMemo(() => extractUniqueUsers(data), [data]);
   const totalPages = useMemo(() => data?.totalPages ?? 1, [data]);
 
-  // Post count state map
   const [counts, setCounts] = useState<Record<string, number | undefined>>({});
 
   useEffect(() => {
@@ -117,7 +112,6 @@ export default function AdminUsersListPage() {
       const ids = users.map((u) => u.id).filter(Boolean);
       if (ids.length === 0) return;
 
-      // Only fetch missing counts
       const missing = ids.filter((id) => !(id in counts));
       if (missing.length === 0) return;
 
@@ -139,7 +133,7 @@ export default function AdminUsersListPage() {
     return () => {
       cancelled = true;
     };
-  }, [users]);
+  }, [users, counts]);
 
   return (
     <section className="space-y-4">
@@ -198,14 +192,16 @@ export default function AdminUsersListPage() {
               users.map((u) => (
                 <tr key={u.id} className="border-t">
                   <td className="p-2">{u.username}</td>
-                  <td className="p-2">{u.role}</td>
                   <td className="p-2">
-                    {counts[u.id] === undefined ? (
-                      <span className="text-[var(--fg-muted)]">—</span>
-                    ) : (
-                      counts[u.id]
-                    )}
+                    {String(u.role || "User").toLowerCase() === "admin" ? "Admin" : "User"}
                   </td>
+                    <td className="p-2">
+                      {counts[u.id] === undefined ? (
+                        <span className="text-[var(--fg-muted)]">—</span>
+                      ) : (
+                        counts[u.id]
+                      )}
+                    </td>
                   <td className="p-2">
                     <code className="text-xs text-[var(--fg-muted)]">{u.id}</code>
                   </td>

@@ -23,10 +23,13 @@ export default function AdminCategoryCreatePage() {
     try {
       await categoriesService.create({ name: name.trim() });
       show("Category created", { type: "success" });
-      router.push("/admin/categories");
+      // Keep submitting true until navigation; avoid back to form
+      router.replace("/admin/categories");
+      return;
     } catch {
       show("Failed to create category", { type: "error" });
     } finally {
+      // Only clear when staying due to error
       setSubmitting(false);
     }
   }
@@ -64,8 +67,12 @@ export default function AdminCategoryCreatePage() {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/admin/categories")}
-            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600"
+            onClick={() => {
+              if (!submitting) router.push("/admin/categories");
+            }}
+            className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-orange-600 disabled:opacity-50"
+            disabled={submitting}
+            aria-disabled={submitting}
           >
             Cancel
           </button>

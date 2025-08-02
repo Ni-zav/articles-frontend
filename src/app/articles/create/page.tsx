@@ -82,10 +82,15 @@ export default function CreateArticlePage() {
       });
       show("Article created", { type: "success" });
       // Redirect preference: list by default; if id available, go to detail
-      router.push(created?.id ? `/articles/${created.id}` : "/articles");
+      const target = created?.id ? `/articles/${created.id}` : "/articles";
+      // Use replace to avoid back-nav to form; keep loading state until navigation resolves
+      router.replace(target);
+      // Do not reset submitting here; keep it true so UI shows "Creating…" until redirect completes
+      return;
     } catch {
       show("Failed to create article", { type: "error" });
     } finally {
+      // Only clear when there is an error path that stays on the page
       setSubmitting(false);
     }
   }
@@ -184,6 +189,11 @@ export default function CreateArticlePage() {
           <Link
             href="/articles"
             className="button button-outline text-sm"
+            aria-disabled={submitting}
+            tabIndex={submitting ? -1 : 0}
+            onClick={(e) => {
+              if (submitting) e.preventDefault();
+            }}
           >
             Cancel
           </Link>

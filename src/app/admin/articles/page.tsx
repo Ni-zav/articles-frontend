@@ -7,14 +7,18 @@ import { articlesService } from "@/services/articles";
 import { categoriesService } from "@/services/categories";
 import type { Article, Category, PaginatedResponse } from "@/types";
 
+import { useToast } from "@/components/ui/ToastProvider";
+
 export default function AdminArticlesListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { show } = useToast();
 
   const [title, setTitle] = useState<string>(searchParams?.get("title") ?? "");
   const [categoryId, setCategoryId] = useState<string>(searchParams?.get("category") ?? "");
   const [page, setPage] = useState<number>(Number(searchParams?.get("page") ?? 1));
   const [loading, setLoading] = useState<boolean>(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [data, setData] = useState<PaginatedResponse<Article> | null>(null);
@@ -125,7 +129,7 @@ export default function AdminArticlesListPage() {
         </div>
       </div>
 
-      <div className="border rounded-md overflow-x-auto">
+      <div className="border rounded-md overflow-x-auto" aria-busy={!!deletingId}>
         <table className="w-full text-sm table">
           <thead>
             <tr>
@@ -153,6 +157,10 @@ export default function AdminArticlesListPage() {
                         href={`/admin/articles/${a.id}/edit`}
                         className="button button-outline text-sm px-2 py-1"
                         aria-label={`Edit ${a.title}`}
+                        aria-disabled={!!deletingId}
+                        onClick={(e) => {
+                          if (deletingId) e.preventDefault();
+                        }}
                       >
                         Edit
                       </Link>
@@ -160,9 +168,40 @@ export default function AdminArticlesListPage() {
                         href={`/articles/${a.id}`}
                         className="button button-outline text-sm px-2 py-1"
                         aria-label={`View ${a.title}`}
+                        aria-disabled={!!deletingId}
+                        onClick={(e) => {
+                          if (deletingId) e.preventDefault();
+                        }}
                       >
                         View
                       </Link>
+                      <button
+                        type="button"
+                        className="button button-danger text-sm px-2 py-1 disabled:opacity-50"
+                        disabled={!!deletingId}
+                        aria-busy={deletingId === a.id}
+                        aria-label={`Delete ${a.title}`}
+                        onClick={async () => {
+                          if (deletingId) return;
+                          const confirmMsg = `Delete article "${a.title}"? This cannot be undone.`;
+                          if (!window.confirm(confirmMsg)) return;
+                          setDeletingId(a.id);
+                          try {
+                            await articlesService.remove(a.id);
+                            show("Article deleted", { type: "success" });
+                            // Keep busy until navigation; refresh list by replacing to page 1 or current
+                            router.replace(`/admin/articles?title=${encodeURIComponent(title)}&category=${encodeURIComponent(categoryId)}&page=${page}`);
+                            return;
+                          } catch {
+                            show("Failed to delete article", { type: "error" });
+                          } finally {
+                            // Only clear if still on page (error case)
+                            setDeletingId(null);
+                          }
+                        }}
+                      >
+                        {deletingId === a.id ? "Deleting…" : "Delete"}
+                      </button>
                     </div>
                   </td>
                 </tr>

@@ -60,6 +60,7 @@ export default function RegisterPage() {
     } catch (e: any) {
       setErr(e?.response?.data?.message ?? "Registration failed");
     } finally {
+      // Only clear loading if we remain on the page due to an error
       setLoading(false);
     }
   };
@@ -122,6 +123,8 @@ export default function RegisterPage() {
         <button
           className="button button-primary text-sm disabled:opacity-50"
           disabled={loading}
+          aria-busy={loading}
+          aria-label="Register"
         >
           {loading ? "Creating account..." : "Register"}
         </button>
@@ -132,6 +135,10 @@ export default function RegisterPage() {
         <a
           className="underline hover:text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-sm"
           href="/login"
+          aria-disabled={loading}
+          onClick={(e) => {
+            if (loading) e.preventDefault();
+          }}
         >
           Login
         </a>

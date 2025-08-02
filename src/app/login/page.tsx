@@ -27,13 +27,16 @@ export default function LoginPage() {
         } catch {
           // ignore; allow redirect with default
         }
+        // Keep loading true until navigation occurs so the button shows "Signing in..."
         window.location.replace(roleRedirectPath(role));
+        return;
       } else {
         setErr("Invalid response");
       }
     } catch (e: any) {
       setErr(e?.response?.data?.message ?? "Login failed");
     } finally {
+      // Only clear loading if we are still on the page (i.e., an error occurred)
       setLoading(false);
     }
   };
@@ -80,6 +83,8 @@ export default function LoginPage() {
         <button
           className="button button-primary text-sm disabled:opacity-50"
           disabled={loading}
+          aria-busy={loading}
+          aria-label="Login"
         >
           {loading ? "Signing in..." : "Login"}
         </button>
@@ -89,6 +94,10 @@ export default function LoginPage() {
         <a
           className="underline hover:text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-sm"
           href="/register"
+          aria-disabled={loading}
+          onClick={(e) => {
+            if (loading) e.preventDefault();
+          }}
         >
           Register
         </a>

@@ -91,10 +91,13 @@ export default function AdminArticleEditPage() {
         categoryId,
       });
       show(isDraft ? "Draft saved" : "Article updated", { type: "success" });
-      router.push("/admin/articles");
+      // Keep submitting state active until navigation completes; avoid back to edit with replace
+      router.replace("/admin/articles");
+      return;
     } catch {
       show("Failed to save article", { type: "error" });
     } finally {
+      // Only clear when staying on page due to error
       setSubmitting(false);
     }
   }
@@ -190,8 +193,12 @@ export default function AdminArticleEditPage() {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/admin/articles")}
-            className="button button-outline text-sm"
+            onClick={() => {
+              if (!submitting) router.push("/admin/articles");
+            }}
+            className="button button-outline text-sm disabled:opacity-50"
+            disabled={submitting}
+            aria-disabled={submitting}
           >
             Cancel
           </button>

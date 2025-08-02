@@ -51,11 +51,14 @@ export default function AdminCategoryEditPage() {
       show("Category updated", { type: "success" });
       // debug log for QA verification
       console.log("[Category Edit] Update success:", { id, name: name.trim() });
-      router.push("/admin/categories");
+      // Keep submitting true until navigation completes; avoid back to edit
+      router.replace("/admin/categories");
+      return;
     } catch (err: any) {
       show(err?.response?.data?.message ?? "Failed to update category", { type: "error" });
       console.error("[Category Edit] Update failed:", err);
     } finally {
+      // Only clear when staying due to error
       setSubmitting(false);
     }
   }
@@ -100,11 +103,15 @@ export default function AdminCategoryEditPage() {
             <button
               type="button"
               onClick={() => {
-                console.log("[Category Edit] Cancel pressed");
-                router.push("/admin/categories");
+                if (!submitting) {
+                  console.log("[Category Edit] Cancel pressed");
+                  router.push("/admin/categories");
+                }
               }}
-              className="button button-outline text-sm"
+              className="button button-outline text-sm disabled:opacity-50"
               aria-label="Cancel and go back"
+              disabled={submitting}
+              aria-disabled={submitting}
             >
               Cancel
             </button>
