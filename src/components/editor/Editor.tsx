@@ -24,36 +24,43 @@ export default function TipTapEditor({
   const [preview, setPreview] = useState(false);
   const lastHTMLRef = useRef<string>(initialHTML);
 
-  const editor = useEditor({
-    editable,
-    extensions: [
-      StarterKit.configure({
-        codeBlock: true,
-      }),
-      Link.configure({
-        autolink: true,
-        openOnClick: true,
-        linkOnPaste: true,
-      }),
-      Image.configure({
-        HTMLAttributes: {
-          class: "max-w-full h-auto",
-        },
-      }),
-    ],
-    content: initialHTML || "<p></p>",
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      lastHTMLRef.current = html;
-      onChange?.(html);
+  const editor = useEditor(
+    {
+      editable,
+      // Avoid SSR hydration mismatches: TipTap recommends disabling immediate render
+      immediatelyRender: false,
+      extensions: [
+        StarterKit.configure({
+          codeBlock: {}, // fix type: pass options object instead of boolean
+        }),
+        Link.configure({
+          autolink: true,
+          openOnClick: true,
+          linkOnPaste: true,
+        }),
+        Image.configure({
+          HTMLAttributes: {
+            class: "max-w-full h-auto",
+          },
+        }),
+      ],
+      content: initialHTML || "<p></p>",
+      onUpdate: ({ editor }) => {
+        const html = editor.getHTML();
+        lastHTMLRef.current = html;
+        onChange?.(html);
+      },
     },
-  }, [editable]);
+    [editable]
+  );
 
   // keep external initialHTML in sync on mount/update
   useEffect(() => {
     if (!editor) return;
     if (typeof initialHTML === "string" && initialHTML !== lastHTMLRef.current) {
-      editor.commands.setContent(initialHTML || "<p></p>", false);
+      // setContent signature in TipTap v2: setContent(content, emitUpdate?)
+      // use command chain to avoid type friction and updates
+      editor.chain().setContent(initialHTML || "<p></p>").run();
       lastHTMLRef.current = initialHTML;
     }
   }, [editor, initialHTML]);

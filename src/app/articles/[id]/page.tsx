@@ -7,6 +7,17 @@ import { articlesService } from "@/services/articles";
 import type { Article, PaginatedResponse } from "@/types";
 import { fetchWithFallback, fallbackData } from "@/lib/fallback";
 import { PAGINATION } from "@/constants/env";
+import DOMPurify from "dompurify";
+
+/** Client-safe sanitizer wrapper */
+function sanitizeHtml(html: string): string {
+  try {
+    // Use DOMPurify profiles to keep basic formatting only
+    return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } });
+  } catch {
+    return html;
+  }
+}
 
 function Breadcrumbs({ article }: { article?: Article }) {
   return (
@@ -157,9 +168,9 @@ export default function ArticleDetailPage() {
               {article.category?.name ?? "Uncategorized"}
             </div>
             <div className="prose max-w-none">
-              {/* Render HTML returned by API; ensure server provides sanitized/trusted HTML */}
+              {/* Render HTML returned by API; sanitized on client as additional safety */}
               <div
-                dangerouslySetInnerHTML={{ __html: article?.content ?? "" }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(article?.content ?? "") }}
                 aria-label="Article content"
               />
             </div>

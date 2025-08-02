@@ -8,7 +8,8 @@ import { http } from "@/lib/http";
 async function fetchUserRole(): Promise<Role | undefined> {
   try {
     if (!getToken()) return undefined;
-    const res = await http.get("/me");
+    // Align with API docs: GET /auth/profile returns { id, username, role }
+    const res = await http.get("/auth/profile");
     const role = (res.data as any)?.role as Role | undefined;
     return role;
   } catch {

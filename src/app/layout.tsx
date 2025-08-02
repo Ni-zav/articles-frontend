@@ -30,7 +30,7 @@ export default function RootLayout({
             <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
               <a href="/" className="font-semibold">Home</a>
               <a href="/articles" className="text-sm text-gray-600 hover:text-gray-900">Articles</a>
-              {/* Client header handles auth-aware controls */}
+              {/* Client header handles auth-aware controls and role-based nav */}
               <HeaderClientWrapper />
             </div>
           </header>

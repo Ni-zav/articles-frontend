@@ -1,17 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/ToastProvider";
 
-export default function Error({ error }: { error: Error & { digest?: string } }) {
+export default function AdminArticleEditError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
   const router = useRouter();
   const { show } = useToast();
 
-  React.useEffect(() => {
-    show("An error occurred while loading the editor", { type: "error" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    const msg = error?.message
+      ? `Failed to load editor: ${error.message}`
+      : "An error occurred while loading the editor";
+    show(msg, { type: "error" });
+  }, [error, show]);
 
   return (
     <section aria-labelledby="edit-article-error-title" className="max-w-3xl space-y-4">
@@ -22,8 +30,12 @@ export default function Error({ error }: { error: Error & { digest?: string } })
       <div>
         <button
           type="button"
-          onClick={() => router.refresh()}
+          onClick={() => {
+            reset();
+            router.refresh();
+          }}
           className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+          aria-label="Retry loading editor"
         >
           Retry
         </button>

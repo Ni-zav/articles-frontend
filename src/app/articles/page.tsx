@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { articlesService } from "@/services/articles";
 import { categoriesService } from "@/services/categories";
 import type { Article, Category, PaginatedResponse } from "@/types";
@@ -16,6 +17,8 @@ function useDebounce<T>(value: T, delay = 400) {
   return debounced;
 }
 
+import * as React from "react";
+// Import Link with a safe alias to avoid shadowing or IDE confusion
 import Link from "next/link";
 
 // Local module-level cache for categories, used for reliable name rendering in ArticleCard
@@ -31,7 +34,6 @@ function ArticleCard({ article }: { article: Article }) {
       <p className="text-sm text-gray-500 mt-1">
         {(article.category?.name ??
           (() => {
-            // Fallback to category by id if relationship not populated
             const cat = categoriesCache.get(article.categoryId);
             return cat?.name ?? "Uncategorized";
           })())}
@@ -46,6 +48,9 @@ function ArticleCard({ article }: { article: Article }) {
 }
 
 export default function ArticlesPage() {
+  const params = useSearchParams();
+  const mine = (params?.get("mine") ?? "") === "1";
+
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -56,7 +61,6 @@ export default function ArticlesPage() {
   const [page, setPage] = useState<number>(1);
   const limit = PAGINATION.defaultLimit;
 
-  // pagination info from API
   const [totalPages, setTotalPages] = useState<number | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState<number | undefined>(undefined);
   const [totalData, setTotalData] = useState<number | undefined>(undefined);
@@ -64,22 +68,18 @@ export default function ArticlesPage() {
   const debouncedSearch = useDebounce(search, 400);
   const debouncedCategory = useDebounce(category, 400);
 
-
-  // Load categories from API first; fallback to local if unavailable
   useEffect(() => {
     let mounted = true;
     async function loadCategories() {
       const cats = await fetchWithFallback(
         async () => {
           const res = await categoriesService.list();
-          // API returns PaginatedResponse<Category>; prefer data from API
           return res.data;
         },
         () => fallbackData.categories
       );
       if (!mounted) return;
       setCategories(cats);
-      // populate cache for safe fallback by id
       categoriesCache.clear();
       for (const c of cats) categoriesCache.set(c.id, c);
     }
@@ -89,7 +89,6 @@ export default function ArticlesPage() {
     };
   }, []);
 
-  // Load articles with filters/pagination
   useEffect(() => {
     let mounted = true;
     setLoading(true);
@@ -97,6 +96,18 @@ export default function ArticlesPage() {
 
     const run = async () => {
       try {
+        // Resolve current user id when mine=1 so backend can filter via userId per api-docs.md
+        let meId: string | undefined = undefined;
+        if (mine) {
+          try {
+            const { http } = await import("@/lib/http");
+            const prof = await http.get("/auth/profile");
+            meId = (prof.data as any)?.id as string | undefined;
+          } catch {
+            meId = undefined;
+          }
+        }
+
         const server = await fetchWithFallback<PaginatedResponse<Article>>(
           async () => {
             const res = await articlesService.list({
@@ -104,7 +115,8 @@ export default function ArticlesPage() {
               category: debouncedCategory || undefined,
               page,
               limit,
-            });
+              ...(mine && meId ? { userId: meId } : {}),
+            } as any);
             return res;
           },
           () => {
@@ -117,7 +129,10 @@ export default function ArticlesPage() {
                 a.categoryId === debouncedCategory ||
                 a.category?.name?.toLowerCase() ===
                   debouncedCategory.toLowerCase();
-              return matchTitle && matchCat;
+              // When offline, approximate "mine" using userId from cached profile (if any)
+              const fallbackMeId = (fallbackData as any)?.me?.id as string | undefined;
+              const matchMine = !mine || (a as any).userId === (meId ?? fallbackMeId);
+              return matchTitle && matchCat && matchMine;
             });
             const paged = paginateArray(filtered, page, limit);
             return {
@@ -133,17 +148,38 @@ export default function ArticlesPage() {
         );
         if (!mounted) return;
 
-        // Ensure category fallback on API failure or missing category join
         const withSafeCategory = server.data.map((a) => ({
           ...a,
-          category: a.category ?? categories.find((c) => c.id === a.categoryId) ?? { id: "", name: "Uncategorized", userId: "", createdAt: "", updatedAt: "" },
+          category:
+            a.category ??
+            categories.find((c) => c.id === a.categoryId) ?? {
+              id: "",
+              name: "Uncategorized",
+              userId: "",
+              createdAt: "",
+              updatedAt: "",
+            },
         }));
 
-        // Enforce strict limit items per page on UI regardless of API inconsistencies
         const sliced = withSafeCategory.slice(0, limit);
         setArticles(sliced);
 
-        // Normalize pagination fields from API: prefer totalPages/currentPage when available
+        // Debug logs to verify filtering behavior (remove before prod)
+        // eslint-disable-next-line no-console
+        console.log("[Articles] mine?", mine, "meId:", meId, "returned:", (server?.data ?? []).length);
+        if (mine && meId) {
+          // eslint-disable-next-line no-console
+          console.log("[Articles] sample userIds:", (server?.data ?? []).slice(0, 5).map((a: any) => a.userId));
+        }
+
+        // Debug logs to verify filter behavior (remove later)
+        // eslint-disable-next-line no-console
+        console.log("[Articles] mine?", mine, "meId:", meId, "returned:", (server?.data ?? []).length);
+        if (mine && meId) {
+          // eslint-disable-next-line no-console
+          console.log("[Articles] sample userIds:", (server?.data ?? []).slice(0, 5).map((a: any) => a.userId));
+        }
+
         const apiTotalPages =
           server.totalPages ??
           (server.total && server.limit
@@ -168,10 +204,9 @@ export default function ArticlesPage() {
     return () => {
       mounted = false;
     };
-  }, [debouncedSearch, debouncedCategory, page, limit]);
+  }, [debouncedSearch, debouncedCategory, page, limit, mine, categories]);
 
   const categoryOptions = useMemo(() => {
-    // Wire to API response only (with "All" option). If categories API fails, fallbackData already used above.
     return [{ id: "", name: "All" }, ...categories.map((c) => ({ id: c.id, name: c.name }))];
   }, [categories]);
 
@@ -180,10 +215,9 @@ export default function ArticlesPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold">Articles</h1>
+        <h1 className="text-2xl font-bold">{mine ? "My Articles" : "Articles"}</h1>
         <p className="text-sm text-gray-600">
-          Search, filter by category, and browse articles. Pagination is {limit} items
-          per page.
+          {mine ? "These are your articles." : `Search, filter by category, and browse articles. Pagination is ${limit} items per page.`}
         </p>
       </header>
 
@@ -226,7 +260,7 @@ export default function ArticlesPage() {
       ) : error ? (
         <div className="text-red-600 text-sm">{error}</div>
       ) : articles.length === 0 ? (
-        <div className="text-sm text-gray-600">No articles found.</div>
+        <div className="text-sm text-gray-600">{mine ? "You have no articles yet." : "No articles found."}</div>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

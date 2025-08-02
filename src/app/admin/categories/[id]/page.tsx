@@ -49,9 +49,14 @@ export default function AdminCategoryEditPage() {
     try {
       await categoriesService.update(id, { name: name.trim() });
       show("Category updated", { type: "success" });
+      // debug log for QA verification
+      // eslint-disable-next-line no-console
+      console.log("[Category Edit] Update success:", { id, name: name.trim() });
       router.push("/admin/categories");
-    } catch {
-      show("Failed to update category", { type: "error" });
+    } catch (err: any) {
+      show(err?.response?.data?.message ?? "Failed to update category", { type: "error" });
+      // eslint-disable-next-line no-console
+      console.error("[Category Edit] Update failed:", err);
     } finally {
       setSubmitting(false);
     }
@@ -64,7 +69,7 @@ export default function AdminCategoryEditPage() {
       {loading ? (
         <p className="text-sm text-gray-600">Loading…</p>
       ) : (
-        <form onSubmit={onSubmit} noValidate className="space-y-4">
+        <form onSubmit={onSubmit} noValidate className="space-y-4" aria-describedby={nameError ? "name-error" : undefined}>
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
             <input
@@ -77,6 +82,7 @@ export default function AdminCategoryEditPage() {
               aria-describedby={nameError ? "name-error" : undefined}
               className="w-full border rounded-md px-3 py-2 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
               placeholder="e.g. Technology"
+              minLength={2}
               required
             />
             {nameError ? (
@@ -89,13 +95,19 @@ export default function AdminCategoryEditPage() {
               type="submit"
               disabled={submitting}
               className="px-3 py-2 rounded-md bg-blue-600 text-white text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 disabled:opacity-50"
+              aria-label="Save category"
             >
               {submitting ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
-              onClick={() => router.push("/admin/categories")}
+              onClick={() => {
+                // eslint-disable-next-line no-console
+                console.log("[Category Edit] Cancel pressed");
+                router.push("/admin/categories");
+              }}
               className="px-3 py-2 rounded-md border text-sm focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+              aria-label="Cancel and go back"
             >
               Cancel
             </button>
