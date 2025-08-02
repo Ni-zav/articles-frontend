@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 export default function AdminDashboardPage() {
   return (
     <section aria-labelledby="admin-dashboard-title">

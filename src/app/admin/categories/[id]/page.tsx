@@ -50,12 +50,10 @@ export default function AdminCategoryEditPage() {
       await categoriesService.update(id, { name: name.trim() });
       show("Category updated", { type: "success" });
       // debug log for QA verification
-      // eslint-disable-next-line no-console
       console.log("[Category Edit] Update success:", { id, name: name.trim() });
       router.push("/admin/categories");
     } catch (err: any) {
       show(err?.response?.data?.message ?? "Failed to update category", { type: "error" });
-      // eslint-disable-next-line no-console
       console.error("[Category Edit] Update failed:", err);
     } finally {
       setSubmitting(false);
@@ -102,7 +100,6 @@ export default function AdminCategoryEditPage() {
             <button
               type="button"
               onClick={() => {
-                // eslint-disable-next-line no-console
                 console.log("[Category Edit] Cancel pressed");
                 router.push("/admin/categories");
               }}

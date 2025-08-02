@@ -29,14 +29,13 @@ export default function AdminGuard({ children, fallback = null }: AdminGuardProp
       redirectTo?: string;
       roles?: Array<"User" | "Admin">;
       getUserRole?: () => Promise<Role | undefined> | Role | undefined;
-      children?: React.ReactNode;
     }>,
     {
       fallback,
       redirectTo: "/login",
       roles: ["Admin"],
       getUserRole: fetchUserRole,
-      children,
-    }
+    },
+    children
   );
 }

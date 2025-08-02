@@ -10,7 +10,6 @@ type LoadingProps = {
 
 export default function Loading({ message = "Loading…", compact, className }: LoadingProps) {
   const sectionClass = ["p-4", className].filter(Boolean).join(" ");
-  const bar = <div className="skeleton rounded" />;
 
   if (compact) {
     return (

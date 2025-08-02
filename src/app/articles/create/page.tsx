@@ -10,6 +10,11 @@ import type { Category } from "@/types";
 import { useToast } from "@/components/ui/ToastProvider";
 
 function stripHtml(html: string) {
+  if (typeof document === "undefined") {
+    // Fallback: rough HTML tag strip for SSR/prerender phase
+    const text = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ");
+    return text.replace(/\u00A0/g, " ").trim();
+  }
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   const text = tmp.textContent || tmp.innerText || "";
@@ -55,7 +60,9 @@ export default function CreateArticlePage() {
   const titleError = useMemo(() => (!title.trim() ? "Title is required" : ""), [title]);
   const categoryError = useMemo(() => (!categoryId ? "Category is required" : ""), [categoryId]);
   const contentError = useMemo(() => {
-    const plain = stripHtml(content.replace(/<p>\s*<\/p>/g, ""));
+    // Avoid SSR reference to document: stripHtml handles SSR fallback, but also guard here
+    const base = content.replace(/<p>\s*<\/p>/g, "");
+    const plain = stripHtml(base);
     return !plain ? "Content cannot be empty" : "";
   }, [content]);
 

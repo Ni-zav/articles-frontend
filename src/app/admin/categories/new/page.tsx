@@ -24,7 +24,7 @@ export default function AdminCategoryCreatePage() {
       await categoriesService.create({ name: name.trim() });
       show("Category created", { type: "success" });
       router.push("/admin/categories");
-    } catch (err: unknown) {
+    } catch {
       show("Failed to create category", { type: "error" });
     } finally {
       setSubmitting(false);

@@ -56,7 +56,7 @@ export default function AdminCategoriesListPage() {
         if (!active) return;
         setItems(data.data || []);
         setTotal(data.total ?? data.totalData);
-      } catch (e) {
+      } catch {
         if (!active) return;
         setError("Failed to load categories");
       } finally {

@@ -130,12 +130,16 @@ export default function ArticleDetailPage() {
         );
         if (!mounted) return;
         setRelated((relatedRes.data ?? []).slice(0, 3));
-      } catch (e) {
+      } catch {
         if (!mounted) return;
         setErr("Failed to load article");
       } finally {
-        if (!mounted) return;
-        setLoading(false);
+        if (!mounted) {
+          // avoid return in finally (no-unsafe-finally)
+          // simply exit without returning a value
+        } else {
+          setLoading(false);
+        }
       }
     }
     run();

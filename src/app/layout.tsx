@@ -28,8 +28,8 @@ export default function RootLayout({
         <ToastProvider>
           <header className="app-header">
             <div className="container py-3 flex items-center gap-4">
-              <a href="/" className="text-base font-semibold hover:opacity-90">Article Platform</a>
-              <a href="/articles" className="text-sm muted hover:text-foreground">Articles</a>
+              <Link href="/" className="text-base font-semibold hover:opacity-90">Article Platform</Link>
+              <Link href="/articles" className="text-sm muted hover:text-foreground">Articles</Link>
               {/* Client header handles auth-aware controls and role-based nav */}
               <HeaderClientWrapper />
             </div>
@@ -47,3 +47,4 @@ export default function RootLayout({
 
 import HeaderClientWrapper from "@/components/HeaderClient";
 import ToastProvider from "@/components/ui/ToastProvider";
+import Link from "next/link";

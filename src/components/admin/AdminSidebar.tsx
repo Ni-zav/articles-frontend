@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import React from "react";
 import { usePathname } from "next/navigation";
@@ -46,6 +46,7 @@ export default function AdminSidebar() {
           <NavItem href="/admin" label="Dashboard" />
           <NavItem href="/admin/articles" label="Articles" />
           <NavItem href="/admin/categories" label="Categories" />
+          <NavItem href="/admin/users" label="Users" />
         </ul>
       </nav>
     </aside>
